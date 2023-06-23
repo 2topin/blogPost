@@ -8,37 +8,42 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/blogPosts")
+@RequestMapping("/api")
 public class BlogPostController {
-
     private final BlogPostService blogPostService;
 
     public BlogPostController(BlogPostService blogPostService) {
         this.blogPostService = blogPostService;
     }
 
-    @PostMapping("")
-    public BlogPostResponseDto createBlogPost(@RequestBody BlogPostRequestDto requestDto) {
-        return blogPostService.createBlogPost(requestDto);
-    }
+    @PostMapping("/blogPosts")
+    public BlogPostResponseDto createBlogPost(@RequestBody BlogPostRequestDto blogPostRequestDto) {
+        return blogPostService.createBlogPost(blogPostRequestDto);
+    } // 생성
 
-    @GetMapping("")
+    @GetMapping("/blogPosts")
     public List<BlogPostResponseDto> getBlogPosts() {
         return blogPostService.getBlogPosts();
-    }
+    } // 함께 조회
 
-    @PutMapping("/{id}")
-    public Long updateBlogPost(@PathVariable Long id, @RequestBody BlogPostRequestDto requestDto) {
-        return blogPostService.updateBlogPost(id, requestDto);
-    }
+    @GetMapping("/blogPosts/{id}")
+    public BlogPostResponseDto getBlogPost(@PathVariable Long id) {
+        return blogPostService.getBlogPost(id);
+    } // 하나 조회
 
-    @DeleteMapping("/{id}")
-    public Long deleteBlogPost(@PathVariable Long id) {
-        return blogPostService.deleteBlogPost(id);
-    }
+    @PutMapping("/blogPosts/{id}")
+    public BlogPostResponseDto updateBlogPost(@PathVariable Long id, @RequestBody BlogPostRequestDto blogPostRequestDto) {
+        return blogPostService.updateBlogPost(id, blogPostRequestDto);
+    } // 수정
 
-    @GetMapping("/contents")
-    public List<BlogPostResponseDto> getBlogPostsByKeyword(String keyword){
-        return blogPostService.getBlogPostsByKeyword(keyword);
-    }
+    @DeleteMapping("/blogPosts/{id}")
+    public BlogPostResponseDto deleteBlogPost(@PathVariable Long id, @RequestBody BlogPostRequestDto blogPostRequestDto) {
+        blogPostService.deleteBlogPost(id, blogPostRequestDto.getPassword());
+        return new BlogPostResponseDto(true);
+    } // 삭제
+
+//    @GetMapping("/blogPosts/contents")
+//    public List<BlogPostResponseDto> getBlogPostsByKeyword(String keyword){
+//        return blogPostService.getBlogPostsByKeyword(keyword);
+//    }
 }
