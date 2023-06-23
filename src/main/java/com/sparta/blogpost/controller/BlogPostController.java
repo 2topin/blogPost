@@ -39,7 +39,7 @@ public class BlogPostController {
     @DeleteMapping("/blogPosts/{id}")
     public BlogPostResponseDto deleteBlogPost(@PathVariable Long id, @RequestBody BlogPostRequestDto blogPostRequestDto) {
         blogPostService.deleteBlogPost(id, blogPostRequestDto.getPassword());
-        return new BlogPostResponseDto(true);
+        return new BlogPostResponseDto("게시글이 삭제되었습니다.");
     } // 삭제
 
 //    @GetMapping("/blogPosts/contents")

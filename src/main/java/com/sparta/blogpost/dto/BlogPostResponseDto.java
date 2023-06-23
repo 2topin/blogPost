@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BlogPostResponseDto {
-    private Boolean success;
+    private String status;
     private Long id;
     private String title;
     private String username;
@@ -26,7 +26,7 @@ public class BlogPostResponseDto {
         this.modifiedAt = blogPost.getModifiedAt();
     }
 
-    public BlogPostResponseDto(Boolean success) {
-        this.success = success;
+    public BlogPostResponseDto(String status) {
+        this.status = status;
     }
 }
