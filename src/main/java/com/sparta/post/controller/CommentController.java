@@ -31,19 +31,19 @@ public class CommentController {
             commentService.deleteComment(userDetails.getUser(), id);
             return ResponseEntity.ok().body(new ApiResponseDto("댓글 삭제 되었습니다.", HttpStatus.OK.value()));
         } catch (SecurityException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
     @PutMapping("/comments/{id}")
-    public ResponseEntity<CommentResponseDto> updateComment(@AuthenticationPrincipal UserDetailsImpl details,
+    public ResponseEntity<ApiResponseDto> updateComment(@AuthenticationPrincipal UserDetailsImpl details,
                                                             @RequestBody CommentRequestDto requestDto,
-                                                            Long id) {
+                                                            @PathVariable Long id) {
         try {
             CommentResponseDto responseDto = commentService.updateComment(id, details.getUser(), requestDto);
             return ResponseEntity.ok().body(responseDto);
         } catch (SecurityException e) {
-            throw new SecurityException("수정 권한이 없습니다.");
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 }

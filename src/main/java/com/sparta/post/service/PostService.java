@@ -37,7 +37,10 @@ public class PostService {
 
     public List<PostResponseDto> getPosts() {
         // DB 조회
-        return postRepository.findAllByOrderByModifiedAtDesc().stream().map(PostResponseDto::new).toList();
+        return postRepository.findAllByOrderByModifiedAtDesc()
+                .stream()
+                .map(PostResponseDto::new)
+                .toList();
     }
 
     public PostResponseDto getPost(Long id) {

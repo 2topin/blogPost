@@ -1,19 +1,14 @@
 package com.sparta.post.service;
 
 import com.sparta.post.dto.AuthRequestDto;
-import com.sparta.post.dto.UserResponseDto;
-import com.sparta.post.dto.UserUpdateRequestDto;
 import com.sparta.post.entity.User;
 import com.sparta.post.entity.UserRoleEnum;
-
 import com.sparta.post.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.concurrent.RejectedExecutionException;
 
 @Service
 @Slf4j
@@ -33,7 +28,7 @@ public class UserService {
         String password = requestDto.getPassword();
 
         // 사용자 확인
-        User user = userRepository.findByUsernameAndIsConfirmIsTrue(username).orElseThrow(
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException(" 등록된 사용자가 없습니다.")
         );
 

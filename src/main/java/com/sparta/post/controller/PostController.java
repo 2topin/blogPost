@@ -1,15 +1,19 @@
 package com.sparta.post.controller;
 
+import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.PostRequestDto;
 import com.sparta.post.dto.PostResponseDto;
 import com.sparta.post.entity.User;
 import com.sparta.post.security.UserDetailsImpl;
 import com.sparta.post.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.concurrent.RejectedExecutionException;
 
 @RestController
 @RequestMapping("/api")
@@ -38,10 +42,17 @@ public class PostController {
     } // 하나 조회
 
     @PutMapping("/posts/{id}")
-    public PostResponseDto updatePost(@PathVariable Long id,
+    public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long id,
                                       @RequestBody PostRequestDto postRequestDto,
                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return postService.updatePost(id, postRequestDto, userDetails.getUser());
+
+        try {
+            PostResponseDto post = postService.updatePost(id, postRequestDto, userDetails.getUser());
+            return ResponseEntity.ok().body(post);
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정할 수 있습니다.", 201));
+
+        }
     } // 수정
 
     @DeleteMapping("/posts/{id}")

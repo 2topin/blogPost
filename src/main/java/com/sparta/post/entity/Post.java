@@ -31,13 +31,11 @@ public class Post extends Timestamped {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "post")
-    private List<Comment> commentList = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Comment> commentList;
 
     public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
-        this.password = postRequestDto.getPassword();
-        this.username = postRequestDto.getUsername();
         this.contents = postRequestDto.getContents();
     }
 

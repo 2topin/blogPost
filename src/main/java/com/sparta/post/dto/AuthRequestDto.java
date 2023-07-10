@@ -1,5 +1,6 @@
 package com.sparta.post.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.post.entity.UserRoleEnum;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
@@ -18,7 +19,6 @@ public class AuthRequestDto {
     private  String password;
 
     private UserRoleEnum role; // 회원 권한 (admin, user) 부여
-
-
-
+    private boolean admin = false;
+    private String adminToken = "";
 }
