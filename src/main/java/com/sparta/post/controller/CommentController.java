@@ -20,8 +20,9 @@ public class CommentController {
 
     //댓글 등록
     @PostMapping("/comments")
-    public ResponseEntity<CommentResponseDto> createComment(@RequestBody com.sparta.post.dto.CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return ResponseEntity.ok().body(commentService.createComment(commentRequestDto,userDetails.getUser()));
+    public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        CommentResponseDto comment = commentService.createComment(commentRequestDto,userDetails.getUser());
+        return ResponseEntity.ok(201).body(comment);
     }
 
     @DeleteMapping("/comments")
@@ -34,21 +35,15 @@ public class CommentController {
         }
     }
 
-    @PutMapping("/comments")
-    public ResponseEntity<CommentResponseDto> updateComment(@AuthenticationPrincipal UserDetailsImpl details, @RequestBody CommentRequestDto requestDto) {
+    @PutMapping("/comments/{id}")
+    public ResponseEntity<CommentResponseDto> updateComment(@AuthenticationPrincipal UserDetailsImpl details,
+                                                            @RequestBody CommentRequestDto requestDto,
+                                                            Long id) {
         try {
-            CommentResponseDto responseDto = commentService.updateComment(details.getUser(), requestDto);
+            CommentResponseDto responseDto = commentService.updateComment(id, details.getUser(), requestDto);
             return ResponseEntity.ok().body(responseDto);
         } catch (SecurityException e) {
             throw new SecurityException("수정 권한이 없습니다.");
         }
     }
-
-//    @PutMapping("/comments/like")
-//    public ResponseEntity<PostResponseDto>
-//    addLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails,@RequestBody CommentRequestDto requestDto) {
-//        CommentService.addLikeComment(requestDto.getCommentId(), userDetails);
-//        PostResponseDto likedComment = commentService.getCommentById(id);
-//        return ResponseEntity.ok().body(likedComment);
-//    }
 }

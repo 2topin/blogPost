@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
 @Setter
@@ -28,6 +31,9 @@ public class Post extends Timestamped {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
+
     public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.password = postRequestDto.getPassword();
@@ -40,4 +46,7 @@ public class Post extends Timestamped {
         this.contents = postRequestDto.getContents();
     }
 
+    public void addCommentList(Comment comment) {
+        this.commentList.add(0,comment);
+    }
 }

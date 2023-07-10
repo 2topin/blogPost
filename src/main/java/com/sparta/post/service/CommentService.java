@@ -20,10 +20,9 @@ public class CommentService {
 
     @Transactional
     public CommentResponseDto createComment(com.sparta.post.dto.CommentRequestDto requestDto, com.sparta.post.entity.User user) {
-        //양방향일 때
         Post post = postRepository.findById(requestDto.getPostId()).orElseThrow(() -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        com.sparta.post.entity.Comment comment = new com.sparta.post.entity.Comment(post, requestDto.getContents(), user);
+        Comment comment = new Comment(post, requestDto.getContents(), user);
         post.addCommentList(comment);
         log.info("댓글 " + comment.getContents() + " 등록");
         return new CommentResponseDto(commentRepository.save(comment));
@@ -41,11 +40,11 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(com.sparta.post.entity.User user, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(Long id, User user, CommentRequestDto requestDto) {
 
-        com.sparta.post.entity.Comment comment = findComment(requestDto.getCommentId());
+        Comment comment = commentRepository.findById(id).orElseThrow();
 
-        if (!user.getRole().equals(com.sparta.post.entity.UserRoleEnum.ADMIN)&&!comment.getUser().equals(user)) {
+        if (!user.getRole().equals(UserRoleEnum.ADMIN)&&!comment.getUser().equals(user)) {
             throw new SecurityException("수정 권한이 없습니다.");
         }
 
@@ -55,12 +54,12 @@ public class CommentService {
     }
 
     public CommentResponseDto getCommentById(Long Id) {
-        com.sparta.post.entity.Comment comment = findComment(Id);
+        Comment comment = findComment(Id);
 
         return new CommentResponseDto(comment);
     }
     @Transactional
-    public com.sparta.post.entity.Comment findComment(Long id) {
+    public Comment findComment(Long id) {
         return commentRepository.findById(id).orElseThrow(
                 ()-> new IllegalArgumentException("존재하지 않는 id 입니다. 다시 입력해 주세요")
         );
