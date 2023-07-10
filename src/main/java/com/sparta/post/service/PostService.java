@@ -77,8 +77,8 @@ public class PostService {
         return "게시글이 성공적으로 삭제되었습니다.";
     }
 
-    private Post findPost(Long id) {
+    Post findPost(Long id) {
         return postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 게시글이 존재하지 않습니다.");
+                new IllegalArgumentException("선택한 게시글이 존재하지 않습니다."));
     }
 }

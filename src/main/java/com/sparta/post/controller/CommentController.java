@@ -21,14 +21,14 @@ public class CommentController {
     //댓글 등록
     @PostMapping("/comments")
     public ResponseEntity<CommentResponseDto> createComment(@RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        CommentResponseDto comment = commentService.createComment(commentRequestDto,userDetails.getUser());
-        return ResponseEntity.ok(201).body(comment);
+        CommentResponseDto comment = commentService.createComment(commentRequestDto, userDetails.getUser());
+        return ResponseEntity.status(201).body(comment);
     }
 
-    @DeleteMapping("/comments")
-    public ResponseEntity<ApiResponseDto> deleteComment(@AuthenticationPrincipal UserDetailsImpl details, @RequestBody CommentRequestDto requestDto) {
+    @DeleteMapping("/comments{id}")
+    public ResponseEntity<ApiResponseDto> deleteComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         try {
-            commentService.deleteComment(details.getUser(), requestDto);
+            commentService.deleteComment(userDetails.getUser(), id);
             return ResponseEntity.ok().body(new ApiResponseDto("댓글 삭제 되었습니다.", HttpStatus.OK.value()));
         } catch (SecurityException e) {
             return ResponseEntity.badRequest().body(new ApiResponseDto("삭제 권한이 없습니다.", HttpStatus.BAD_REQUEST.value()));

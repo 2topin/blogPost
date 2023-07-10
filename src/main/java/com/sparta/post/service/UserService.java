@@ -1,7 +1,6 @@
 package com.sparta.post.service;
 
 import com.sparta.post.dto.AuthRequestDto;
-import com.sparta.post.dto.SignupRequestDto;
 import com.sparta.post.dto.UserResponseDto;
 import com.sparta.post.dto.UserUpdateRequestDto;
 import com.sparta.post.entity.User;

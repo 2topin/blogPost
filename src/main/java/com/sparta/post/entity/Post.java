@@ -47,6 +47,6 @@ public class Post extends Timestamped {
     }
 
     public void addCommentList(Comment comment) {
-        this.commentList.add(0,comment);
+        this.commentList.add(0, comment);
     }
 }
