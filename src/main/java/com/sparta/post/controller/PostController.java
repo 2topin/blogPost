@@ -50,7 +50,7 @@ public class PostController {
             PostResponseDto post = postService.updatePost(id, postRequestDto, userDetails.getUser());
             return ResponseEntity.ok().body(post);
         } catch (RejectedExecutionException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정할 수 있습니다.", 201));
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정할 수 있습니다.", 400));
 
         }
     }

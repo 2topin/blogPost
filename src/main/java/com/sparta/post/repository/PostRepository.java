@@ -7,6 +7,6 @@ import java.util.List;
 
 //SimpleJpaRepository에 @Repository달려있어서 여기는 없어도 됨
 public interface PostRepository extends JpaRepository<Post, Long> {
-    List<Post> findAllByOrderByModifiedAtDesc();
+    List<Post> findAllByOrderByCreatedAtDesc();
     List<Post> findAllByContentsContainsOrderByModifiedAtDesc(String keyword);
 }
