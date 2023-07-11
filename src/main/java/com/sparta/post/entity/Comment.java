@@ -18,6 +18,9 @@ public class Comment extends Timestamped {
     @Column(name = "comment_id", nullable = false, updatable = false)
     private Long id;
 
+    @Column(nullable = false)
+    private String contents;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -26,20 +29,9 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "post_id", nullable = false, updatable = false)
     public Post post;
 
-    @Column(nullable = false)
-    private String body;
-
-    public Comment(String body) {
-        this.body = body;
-    }
-    public void setUser(String user) {
-        this.body = body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-    public void setPost(String post) {
-        this.body = body;
+    public Comment(Post post, String contents, User user) {
+        this.post = post;
+        this.contents = contents;
+        this.user = user;
     }
 }

@@ -28,15 +28,19 @@ public class Post extends Timestamped {
     @Column(name = "contents", nullable = false, length = 500)
     private String contents;
 
-    @Column(name = "password", nullable = false)
-    private String password;
-
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
-    private List<Comment> commentList;
+    private List<Comment> commentList = new ArrayList<>();
 
-    public Post(PostRequestDto postRequestDto) {
+    //setAuthor
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Post(PostRequestDto postRequestDto, User user) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
+        this.username = user.getUsername();
+        this.user = user;
     }
 
     public void update(PostRequestDto postRequestDto) {
@@ -44,6 +48,9 @@ public class Post extends Timestamped {
         this.contents = postRequestDto.getContents();
     }
 
+    public void setUser(User user) {
+        this.user = user;
+    }
     public void addCommentList(Comment comment) {
         this.commentList.add(0, comment);
     }

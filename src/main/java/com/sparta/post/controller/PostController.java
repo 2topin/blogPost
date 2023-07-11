@@ -3,44 +3,44 @@ package com.sparta.post.controller;
 import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.PostRequestDto;
 import com.sparta.post.dto.PostResponseDto;
-import com.sparta.post.entity.User;
 import com.sparta.post.security.UserDetailsImpl;
 import com.sparta.post.service.PostService;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
 
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
-
+    // 게시글 작성
     @PostMapping("/posts")
-    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto, User user) {
-        PostResponseDto post = postService.createPost(postRequestDto, user);
+    public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto,
+                                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        PostResponseDto post = postService.createPost(postRequestDto, userDetails);
 
         return ResponseEntity.status(201).body(post);
-    } // 게시글 작성
+    }
 
+    // 전체 게시글 조회
     @GetMapping("/posts")
     public List<PostResponseDto> getPosts() {
         return postService.getPosts();
-    } // 전체 조회
+    }
 
+    // 선택 게시글 조회
     @GetMapping("/posts/{id}")
     public PostResponseDto getPost(@PathVariable Long id) {
         return postService.getPost(id);
-    } // 하나 조회
+    }
 
+    // 게시글 수정
     @PutMapping("/posts/{id}")
     public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long id,
                                       @RequestBody PostRequestDto postRequestDto,
@@ -53,13 +53,18 @@ public class PostController {
             return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정할 수 있습니다.", 201));
 
         }
-    } // 수정
+    }
 
+    // 게시글 삭제
     @DeleteMapping("/posts/{id}")
-    public ResponseEntity<String> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = postService.deletePost(id, userDetails.getUser());
-        return ResponseEntity.ok(msg);
-    } // 삭제
+    public ResponseEntity<ApiResponseDto> deletePost(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        try {
+            postService.deletePost(id, userDetails.getUser());
+            return ResponseEntity.ok().body(new ApiResponseDto("게시글이 삭제되었습니다.", 200));
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("삭제할 권한이 없습니다.", 400));
+        }
+    }
 
 //    @GetMapping("/posts/contents")
 //    public List<postResponseDto> getPostsByKeyword(String keyword){

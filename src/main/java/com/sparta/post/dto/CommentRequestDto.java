@@ -9,5 +9,6 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentRequestDto {
     private Long postId;
-    private String body;
+    private Long commentId;
+    private String contents;
 }

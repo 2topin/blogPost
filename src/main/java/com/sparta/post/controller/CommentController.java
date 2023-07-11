@@ -25,16 +25,18 @@ public class CommentController {
         return ResponseEntity.status(201).body(comment);
     }
 
-    @DeleteMapping("/comments{id}")
+    // 댓글 삭제
+    @DeleteMapping("/comments/{id}")
     public ResponseEntity<ApiResponseDto> deleteComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         try {
             commentService.deleteComment(userDetails.getUser(), id);
-            return ResponseEntity.ok().body(new ApiResponseDto("댓글 삭제 되었습니다.", HttpStatus.OK.value()));
+            return ResponseEntity.ok().body(new ApiResponseDto("댓글이 삭제 되었습니다.", HttpStatus.OK.value()));
         } catch (SecurityException e) {
             return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
+    // 댓글 수정
     @PutMapping("/comments/{id}")
     public ResponseEntity<ApiResponseDto> updateComment(@AuthenticationPrincipal UserDetailsImpl details,
                                                             @RequestBody CommentRequestDto requestDto,

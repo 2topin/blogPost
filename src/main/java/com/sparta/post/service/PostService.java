@@ -6,6 +6,7 @@ import com.sparta.post.entity.Post;
 import com.sparta.post.entity.User;
 import com.sparta.post.entity.UserRoleEnum;
 import com.sparta.post.repository.PostRepository;
+import com.sparta.post.security.UserDetailsImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,10 +26,10 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public PostResponseDto createPost(PostRequestDto requestDto, User user) {
+    public PostResponseDto createPost(PostRequestDto requestDto, UserDetailsImpl userDetails) {
         // RequestDto -> Entity
-        Post post = new Post(requestDto);
-        post.setUsername(user.getUsername());
+        User user = userDetails.getUser();
+        Post post = new Post(requestDto, user);
         // DB 저장
         Post savePost = postRepository.save(post);
         // Entity -> ResponseDto
@@ -66,10 +67,12 @@ public class PostService {
         }
 
     @Transactional
-    public String deletePost(Long id, User user) {
-        // 해당 메모가 DB에 존재하는지 확인
+    public void deletePost(Long id, User user) {
         Post post = postRepository.findById(id)
-                .orElseThrow(()-> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> {
+                    // 게시글이 존재하지 않는 경우 예외 발생
+                    return new IllegalArgumentException("게시글을 찾을 수 없습니다.");
+                });
 
         // 작성자이거나 관리자인지 체크
         if(!post.getUsername().equals(user.getUsername()) && !user.getRole().equals(UserRoleEnum.ADMIN)) {
@@ -77,7 +80,6 @@ public class PostService {
     }
         // post 삭제
         postRepository.delete(post);
-        return "게시글이 성공적으로 삭제되었습니다.";
     }
 
     Post findPost(Long id) {
