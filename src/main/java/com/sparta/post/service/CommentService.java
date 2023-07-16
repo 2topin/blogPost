@@ -1,17 +1,21 @@
 package com.sparta.post.service;
 
+import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.CommentRequestDto;
 import com.sparta.post.dto.CommentResponseDto;
-import com.sparta.post.entity.Comment;
-import com.sparta.post.entity.Post;
-import com.sparta.post.entity.User;
-import com.sparta.post.entity.UserRoleEnum;
+import com.sparta.post.entity.*;
+import com.sparta.post.repository.CommentLikedInfoRepository;
 import com.sparta.post.repository.CommentRepository;
+import com.sparta.post.repository.PostLikedInfoRepository;
+import com.sparta.post.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import java.util.concurrent.RejectedExecutionException;
 
 @Slf4j
 @Service
@@ -19,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostService postService;
+    private final CommentLikedInfoRepository commentLikedInfoRepository;
+
 
     @Transactional
     public CommentResponseDto createComment(CommentRequestDto requestDto, User user) {
@@ -51,5 +57,45 @@ public class CommentService {
         comment.setContents(requestDto.getContents());
 
         return new CommentResponseDto(comment);
+    }
+
+    // comment 좋아요
+    @Transactional
+    public ApiResponseDto addLikeComment(Long commentId, UserDetailsImpl userDetails) {
+        String username = userDetails.getUsername();
+        // commentId와 username을 이용해서 사용자가 이미 Like를 눌렀는지 확인
+
+        //자신의 게시글에 좋아요 X
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 댓글이 존재하지 않습니다."));
+        if (comment.getUser().getUsername().equals(username)) {
+            throw new RejectedExecutionException("자신의 댓글에는 '좋아요'를 할 수 없습니다.");
+        }
+        CommentLikedInfo commentLikedInfo = commentLikedInfoRepository.findByCommentIdAndUsername(commentId, username).orElse(null);
+
+        if (commentLikedInfo == null) {
+            commentLikedInfo = new CommentLikedInfo(commentId, username);
+            commentLikedInfo.setLiked(true);
+            commentLikedInfoRepository.save(commentLikedInfo);
+            updateCommentLikedCount(commentId);
+            return new ApiResponseDto("좋아요", 200);
+        } else {
+            commentLikedInfo.setLiked(!commentLikedInfo.getLiked());
+            commentLikedInfoRepository.save(commentLikedInfo);
+            updateCommentLikedCount(commentId);
+            if (commentLikedInfo.getLiked()) {
+                return new ApiResponseDto("좋아요", 200);
+            } else {
+                return new ApiResponseDto("좋아요 취소", 200);
+            }
+        }
+    }
+
+    // count한 like 저장해주기
+    private void updateCommentLikedCount(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+        Integer commentLikedCount = commentLikedInfoRepository.countByCommentIdAndIsLikedIsTrue(commentId);
+        comment.setCommentLikedCount(commentLikedCount);
     }
 }

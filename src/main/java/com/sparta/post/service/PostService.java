@@ -143,8 +143,6 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
         Integer postLikedCount = postLikedInfoRepository.countByPostIdAndIsLikedIsTrue(postId);
         post.setPostLikedCount(postLikedCount);
-        // TODO save가 꼭 있어야 하나?
-//        postRepository.save(post);
     }
 
     public PostResponseDto getPostById(Long Id) {

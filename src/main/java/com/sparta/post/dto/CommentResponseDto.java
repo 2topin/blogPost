@@ -16,6 +16,7 @@ public class CommentResponseDto extends ApiResponseDto{
     private String username;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private Integer commentLikedCount;
 
     public CommentResponseDto(Comment comment) {
         this.id = comment.getId();
@@ -23,5 +24,7 @@ public class CommentResponseDto extends ApiResponseDto{
         this.username=comment.getUser().getUsername();
         this.createdAt=comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
+        this.commentLikedCount = comment.getCommentLikedCount();
+
     }
 }

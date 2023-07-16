@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.concurrent.RejectedExecutionException;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,7 +49,20 @@ public class CommentController {
             CommentResponseDto responseDto = commentService.updateComment(id, details.getUser(), requestDto);
             return ResponseEntity.ok().body(responseDto);
         } catch (AccessDeniedException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+            return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+    }
+
+    // 좋아요
+    @PutMapping("/comments/{id}/like")
+    public ResponseEntity<ApiResponseDto> addLikeComment(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+        try {
+            ApiResponseDto responseDto = commentService.addLikeComment(id, userDetails);
+            return ResponseEntity.ok().body(responseDto);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.notFound().build();
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("자신의 댓글에는 좋아요를 할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 }

@@ -29,9 +29,22 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "post_id", nullable = false, updatable = false)
     public Post post;
 
+    @Column(nullable = false)
+    private Integer commentLikedCount;
+
+    @Column(nullable = false)
+    private String username;
+
     public Comment(Post post, String contents, User user) {
         this.post = post;
         this.contents = contents;
         this.user = user;
+        this.username = user.getUsername();
+        this.commentLikedCount = 0; // 기본값 설정
+
+    }
+
+    public Integer getCommentLikedCount() {
+        return commentLikedCount;
     }
 }
