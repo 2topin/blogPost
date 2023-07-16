@@ -24,7 +24,9 @@ public class UserController {
     private final JwtUtil jwtUtil;
 
 
-    //회원가입
+    // 회원가입
+    // BindingResult 는 유효성검사 수행 결과를 담는 객체
+    // bindingResult.hasErrors() 로 유효성검사에서 에러가 났는지 확인한다.
     @PostMapping("/auth/signup")
     public ResponseEntity<ApiResponseDto> signup(@Valid @RequestBody AuthRequestDto requestDto, BindingResult bindingResult) {//클라이언트로부터 SignupRequestDto 를 요청 RequestBody 로 받아와서 처리
         if (bindingResult.hasErrors()) {
