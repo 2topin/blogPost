@@ -9,6 +9,7 @@ import com.sparta.post.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +45,7 @@ public class CommentController {
         try {
             CommentResponseDto responseDto = commentService.updateComment(id, details.getUser(), requestDto);
             return ResponseEntity.ok().body(responseDto);
-        } catch (SecurityException e) {
+        } catch (AccessDeniedException e) {
             return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 삭제할 수 있습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }

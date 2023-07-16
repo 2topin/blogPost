@@ -1,14 +1,19 @@
 package com.sparta.post.controller;
 
+import com.google.protobuf.Api;
 import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.PostRequestDto;
 import com.sparta.post.dto.PostResponseDto;
 import com.sparta.post.security.UserDetailsImpl;
 import com.sparta.post.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
@@ -43,13 +48,13 @@ public class PostController {
     // 게시글 수정
     @PutMapping("/posts/{id}")
     public ResponseEntity<ApiResponseDto> updatePost(@PathVariable Long id,
-                                      @RequestBody PostRequestDto postRequestDto,
-                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                     @RequestBody PostRequestDto postRequestDto,
+                                                     @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         try {
             PostResponseDto post = postService.updatePost(id, postRequestDto, userDetails.getUser());
             return ResponseEntity.ok().body(post);
-        } catch (RejectedExecutionException e) {
+        } catch (AccessDeniedException e) {
             return ResponseEntity.badRequest().body(new ApiResponseDto("작성자만 수정할 수 있습니다.", 400));
 
         }
@@ -61,13 +66,23 @@ public class PostController {
         try {
             postService.deletePost(id, userDetails.getUser());
             return ResponseEntity.ok().body(new ApiResponseDto("게시글이 삭제되었습니다.", 200));
-        } catch (RejectedExecutionException e) {
-            return ResponseEntity.badRequest().body(new ApiResponseDto("삭제할 권한이 없습니다.", 400));
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("삭제할 권한이 없습니다.", HttpStatus.BAD_REQUEST.value()));
         }
     }
 
-//    @GetMapping("/posts/contents")
-//    public List<postResponseDto> getPostsByKeyword(String keyword){
-//        return postService.getPostsByKeyword(keyword);
-//    }
+    // 좋아요
+    @PutMapping("/posts/{id}/like")
+    public ResponseEntity<ApiResponseDto> addLikePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+        try {
+            ApiResponseDto responseDto = postService.addLikePost(id, userDetails);
+            return ResponseEntity.ok().body(responseDto);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.notFound().build();
+        } catch (RejectedExecutionException e) {
+            return ResponseEntity.badRequest().body(new ApiResponseDto("자신의 게시글에는 좋아요를 할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
+        }
+    }
 }
+
+

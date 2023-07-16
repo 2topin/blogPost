@@ -1,14 +1,19 @@
 package com.sparta.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CommentRequestDto {
+
+    @NotBlank
     private Long postId;
-    private Long commentId;
+
+    @NotBlank
     private String contents;
+
+    //PathVa~ 에 없으면 commentId가 여기 있어야 됨
 }

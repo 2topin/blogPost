@@ -34,6 +34,7 @@ public class UserController {
     }
 
     //로그인
+    // Servlet 어떤 컨트롤러로 보낼지? 객체를 생성해서 클라이언트에 반환
     @PostMapping("/auth/login")
     public ResponseEntity<ApiResponseDto> login(@RequestBody AuthRequestDto loginRequestDto, HttpServletResponse response) {
         try {
