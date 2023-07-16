@@ -3,10 +3,8 @@ package com.sparta.post.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class CommentRequestDto {
 
     @NotBlank

@@ -10,7 +10,6 @@ import lombok.*;
 @Table(name = "comment")
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 public class Comment extends Timestamped {
 
     @Id
@@ -46,5 +45,13 @@ public class Comment extends Timestamped {
 
     public Integer getCommentLikedCount() {
         return commentLikedCount;
+    }
+
+    public void setCommentLikedCount(Integer commentLikedCount) {
+        this.commentLikedCount = commentLikedCount;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
     }
 }

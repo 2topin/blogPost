@@ -78,6 +78,10 @@ Lv.4 요구사항
 3. 예외처리
     - 아래 예외처리를 AOP 를 활용하여 구현하기
 
-- 게시글/댓글에 ‘좋아요’ 개수도 함께 반환하기
 - ~~토큰을 검사하여, 유효한 토큰일 경우에만 게시글, 댓글 작성, 수정, 삭제 가능 가능~~  ⇒ Spring Security 를 사용하여 토큰 검사 및 인증하기!
-- 회원가입 시 username과 password의 구성이 알맞지 않으면 에러메시지와 statusCode: 400을 Client에 반환하기
+- 회원가입 시 username과 password의 구성이 알맞지 않으면 에러메시지와 statusCode: 400을 Client에 반환하기 ok
+
+
+< 개선사항 >
+Spring Security
+AOP
