@@ -30,19 +30,17 @@ public class Post extends Timestamped {
     private List<Comment> commentList = new ArrayList<>();
 
     @Column(nullable = false)
-    private Integer postLikedCount;
+    private Integer postLikeCount;
 
     //setAuthor
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Post(PostRequestDto postRequestDto, User user) {
+    public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
-        this.username = user.getUsername();
-        this.user = user;
-        this.postLikedCount = 0; // 기본값 설정
+        this.postLikeCount = 0; // 기본값 설정
 
     }
 
@@ -58,11 +56,18 @@ public class Post extends Timestamped {
         this.commentList.add(0, comment);
     }
 
-    public Integer getPostLikedCount() {
-        return postLikedCount;
+    public Integer getPostLikeCount() {
+        return postLikeCount;
     }
-    public void setPostLikedCount(Integer postLikedCount) {
-        this.postLikedCount = postLikedCount;
+    public void setPostLikeCount(Integer postLikeCount) {
+        this.postLikeCount = postLikeCount;
     }
 
+//    public void setTitle(String title) {
+//        this.title = title;
+//    }
+//
+//    public void setContents(String contents) {
+//        this.contents = contents;
+//    }
 }

@@ -18,7 +18,7 @@ public class PostResponseDto extends ApiResponseDto {
     private String contents;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private Integer postLikedCount;
+    private Integer postLikeCount;
     private List<CommentResponseDto> commentList;
 
 
@@ -30,7 +30,7 @@ public class PostResponseDto extends ApiResponseDto {
         this.contents = post.getContents();
         this.createdAt = post.getCreatedAt();
         this.modifiedAt = post.getModifiedAt();
-        this.postLikedCount = post.getPostLikedCount();
+        this.postLikeCount = post.getPostLikeCount();
         this.commentList = post.getCommentList().stream()
                 .sorted(Comparator.comparing(Comment::getCreatedAt)
                         .reversed()).map(CommentResponseDto::new).toList();
