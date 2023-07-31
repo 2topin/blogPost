@@ -4,9 +4,8 @@ import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.CommentRequestDto;
 import com.sparta.post.dto.CommentResponseDto;
 import com.sparta.post.entity.*;
-import com.sparta.post.repository.CommentLikedInfoRepository;
+import com.sparta.post.repository.CommentLikeInfoRepository;
 import com.sparta.post.repository.CommentRepository;
-import com.sparta.post.repository.PostLikedInfoRepository;
 import com.sparta.post.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostService postService;
-    private final CommentLikedInfoRepository commentLikedInfoRepository;
+    private final CommentLikeInfoRepository commentLikeInfoRepository;
 
 
     @Transactional
@@ -71,19 +70,19 @@ public class CommentService {
         if (comment.getUser().getUsername().equals(username)) {
             throw new RejectedExecutionException("자신의 댓글에는 '좋아요'를 할 수 없습니다.");
         }
-        CommentLikedInfo commentLikedInfo = commentLikedInfoRepository.findByCommentIdAndUsername(commentId, username).orElse(null);
+        CommentLikeInfo commentLikeInfo = commentLikeInfoRepository.findByCommentIdAndUsername(commentId, username).orElse(null);
 
-        if (commentLikedInfo == null) {
-            commentLikedInfo = new CommentLikedInfo(commentId, username);
-            commentLikedInfo.setLiked(true);
-            commentLikedInfoRepository.save(commentLikedInfo);
-            updateCommentLikedCount(commentId);
+        if (commentLikeInfo == null) {
+            commentLikeInfo = new CommentLikeInfo(commentId, username);
+            commentLikeInfo.setLike(true);
+            commentLikeInfoRepository.save(commentLikeInfo);
+            updateCommentLikeCount(commentId);
             return new ApiResponseDto("좋아요", 200);
         } else {
-            commentLikedInfo.setLiked(!commentLikedInfo.getLiked());
-            commentLikedInfoRepository.save(commentLikedInfo);
-            updateCommentLikedCount(commentId);
-            if (commentLikedInfo.getLiked()) {
+            commentLikeInfo.setLike(!commentLikeInfo.getLike());
+            commentLikeInfoRepository.save(commentLikeInfo);
+            updateCommentLikeCount(commentId);
+            if (commentLikeInfo.getLike()) {
                 return new ApiResponseDto("좋아요", 200);
             } else {
                 return new ApiResponseDto("좋아요 취소", 200);
@@ -92,10 +91,10 @@ public class CommentService {
     }
 
     // count한 like 저장해주기
-    private void updateCommentLikedCount(Long commentId) {
+    private void updateCommentLikeCount(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-        Integer commentLikedCount = commentLikedInfoRepository.countByCommentIdAndIsLikedIsTrue(commentId);
-        comment.setCommentLikedCount(commentLikedCount);
+        Integer commentLikeCount = commentLikeInfoRepository.countByCommentIdAndIsLikeIsTrue(commentId);
+        comment.setCommentLikeCount(commentLikeCount);
     }
 }

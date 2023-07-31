@@ -29,7 +29,7 @@ public class Comment extends Timestamped {
     public Post post;
 
     @Column(nullable = false)
-    private Integer commentLikedCount;
+    private Integer commentLikeCount;
 
     @Column(nullable = false)
     private String username;
@@ -39,16 +39,16 @@ public class Comment extends Timestamped {
         this.contents = contents;
         this.user = user;
         this.username = user.getUsername();
-        this.commentLikedCount = 0; // 기본값 설정
+        this.commentLikeCount = 0; // 기본값 설정
 
     }
 
-    public Integer getCommentLikedCount() {
-        return commentLikedCount;
+    public Integer getCommentLikeCount() {
+        return commentLikeCount;
     }
 
-    public void setCommentLikedCount(Integer commentLikedCount) {
-        this.commentLikedCount = commentLikedCount;
+    public void setCommentLikeCount(Integer commentLikeCount) {
+        this.commentLikeCount = commentLikeCount;
     }
 
     public void setContents(String contents) {
