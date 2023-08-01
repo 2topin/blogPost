@@ -4,7 +4,7 @@ import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.CommentRequestDto;
 import com.sparta.post.dto.CommentResponseDto;
 import com.sparta.post.entity.*;
-import com.sparta.post.repository.CommentLikeInfoRepository;
+import com.sparta.post.repository.CommentLikeRepository;
 import com.sparta.post.repository.CommentRepository;
 import com.sparta.post.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.concurrent.RejectedExecutionException;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final PostService postService;
-    private final CommentLikeInfoRepository commentLikeInfoRepository;
+    private final CommentLikeRepository commentLikeRepository;
 
 
     @Transactional
@@ -70,19 +70,19 @@ public class CommentService {
         if (comment.getUser().getUsername().equals(username)) {
             throw new RejectedExecutionException("자신의 댓글에는 '좋아요'를 할 수 없습니다.");
         }
-        CommentLikeInfo commentLikeInfo = commentLikeInfoRepository.findByCommentIdAndUsername(commentId, username).orElse(null);
+        CommentLike commentLike = commentLikeRepository.findByCommentIdAndUsername(commentId, username).orElse(null);
 
-        if (commentLikeInfo == null) {
-            commentLikeInfo = new CommentLikeInfo(commentId, username);
-            commentLikeInfo.setLike(true);
-            commentLikeInfoRepository.save(commentLikeInfo);
+        if (commentLike == null) {
+            commentLike = new CommentLike(commentId, username);
+            commentLike.setLike(true);
+            commentLikeRepository.save(commentLike);
             updateCommentLikeCount(commentId);
             return new ApiResponseDto("좋아요", 200);
         } else {
-            commentLikeInfo.setLike(!commentLikeInfo.getLike());
-            commentLikeInfoRepository.save(commentLikeInfo);
+            commentLike.setLike(!commentLike.getLike());
+            commentLikeRepository.save(commentLike);
             updateCommentLikeCount(commentId);
-            if (commentLikeInfo.getLike()) {
+            if (commentLike.getLike()) {
                 return new ApiResponseDto("좋아요", 200);
             } else {
                 return new ApiResponseDto("좋아요 취소", 200);
@@ -94,7 +94,7 @@ public class CommentService {
     private void updateCommentLikeCount(Long commentId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-        Integer commentLikeCount = commentLikeInfoRepository.countByCommentIdAndIsLikeIsTrue(commentId);
+        Integer commentLikeCount = commentLikeRepository.countByCommentIdAndIsLikeIsTrue(commentId);
         comment.setCommentLikeCount(commentLikeCount);
     }
 }

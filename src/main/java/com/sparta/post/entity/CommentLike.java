@@ -3,8 +3,8 @@ package com.sparta.post.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "comment_Like_info")
-public class CommentLikeInfo extends Timestamped {
+@Table(name = "comment_Like")
+public class CommentLike extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,10 +14,10 @@ public class CommentLikeInfo extends Timestamped {
     private String username;
     private Boolean isLike;
 
-    public CommentLikeInfo() {
+    public CommentLike() {
 
     }
-    public CommentLikeInfo(Long commentId, String username) {
+    public CommentLike(Long commentId, String username) {
         this.commentId = commentId;
         this.username = username;
     }

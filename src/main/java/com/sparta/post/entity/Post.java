@@ -17,11 +17,13 @@ public class Post extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    //setAuthor
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "title", nullable = false)
     private String title;
-
-    @Column(name = "username", nullable = false)
-    private String username;
 
     @Column(name = "contents", nullable = false, length = 500)
     private String contents;
@@ -31,11 +33,6 @@ public class Post extends Timestamped {
 
     @Column(nullable = false)
     private Integer postLikeCount;
-
-    //setAuthor
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
 
     public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
@@ -59,9 +56,10 @@ public class Post extends Timestamped {
     public Integer getPostLikeCount() {
         return postLikeCount;
     }
-    public void setPostLikeCount(Integer postLikeCount) {
-        this.postLikeCount = postLikeCount;
-    }
+
+//    public void setPostLikeCount(Integer postLikeCount) {
+//        this.postLikeCount = postLikeCount;
+//    }
 
 //    public void setTitle(String title) {
 //        this.title = title;

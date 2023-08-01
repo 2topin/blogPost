@@ -30,7 +30,7 @@ public class PostLike extends Timestamped {
         this.user = user;
     }
 
-    public Boolean getLike() {
+    public Boolean getLike( ) {
         return isLike;
     }
 

@@ -39,19 +39,15 @@ public interface PostService {
     /*
 
      */
-    ApiResponseDto likePost(Post post, User user);
+    ApiResponseDto likePost(Long id, User user);
 
     /*
 
      */
-    void deleteLikePost(Post post, User user);
+    ApiResponseDto deleteLikePost(Long id, User user);
 
     /*
 
      */
     Post findPost(Long id);
-
-    // post 좋아요
-    @Transactional
-    ApiResponseDto likePost(Long postId, UserDetailsImpl userDetails);
 }

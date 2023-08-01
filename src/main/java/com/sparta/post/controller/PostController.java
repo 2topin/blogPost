@@ -81,8 +81,7 @@ public class PostController {
     @PutMapping("/posts/{id}/like")
     public ResponseEntity<ApiResponseDto> likePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         try {
-            Post post = postService.findPost(id);
-            ApiResponseDto responseDto = postService.likePost(post, userDetails.getUser());
+            ApiResponseDto responseDto = postService.likePost(id, userDetails.getUser());
             return ResponseEntity.ok().body(responseDto);
         } catch (ResponseStatusException e) {
             return ResponseEntity.notFound().build();
@@ -91,18 +90,16 @@ public class PostController {
         }
     }
 
-//    // 좋아요
-//    @DeleteMapping("/posts/{id}/like")
-//    public ResponseEntity<ApiResponseDto> deleteLikePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
-//        try {
-//            ApiResponseDto responseDto = postService.deleteLikePost(id, userDetails);
-//            return ResponseEntity.ok().body(responseDto);
-//        } catch (ResponseStatusException e) {
-//            return ResponseEntity.notFound().build();
-//        } catch (RejectedExecutionException e) {
-//            return ResponseEntity.badRequest().body(new ApiResponseDto("자신의 게시글에는 좋아요를 할 수 없습니다.", HttpStatus.BAD_REQUEST.value()));
-//        }
-//    }
+    // 좋아요 취소
+    @PutMapping("/posts/{id}/unlike")
+    public ResponseEntity<ApiResponseDto> deleteLikePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+        try {
+            ApiResponseDto responseDto = postService.deleteLikePost(id, userDetails.getUser());
+            return ResponseEntity.ok().body(responseDto);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
 
 
