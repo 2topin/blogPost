@@ -1,6 +1,5 @@
 package com.sparta.post.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.post.entity.UserRoleEnum;
 import jakarta.validation.constraints.Pattern;
 import lombok.Getter;

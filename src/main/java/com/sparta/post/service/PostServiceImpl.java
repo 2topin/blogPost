@@ -8,15 +8,11 @@ import com.sparta.post.entity.PostLike;
 import com.sparta.post.entity.User;
 import com.sparta.post.repository.PostLikeRepository;
 import com.sparta.post.repository.PostRepository;
-import com.sparta.post.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +36,7 @@ public class PostServiceImpl implements PostService {
         // DB 조회
         return postRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
-                .map(PostResponseDto::new)
+                .map(post -> new PostResponseDto(post))
                 .toList();
     }
 
@@ -57,15 +53,10 @@ public class PostServiceImpl implements PostService {
         post.update(postRequestDto);
         return new PostResponseDto(post);
     }
+
     @Override
     public void deletePost(Post post, User user) {
         postRepository.delete(post);
-    }
-
-    @Override
-    public Post findPost(Long id) {
-        return postRepository.findById(id).orElseThrow(() ->
-                new IllegalArgumentException("선택한 게시글이 존재하지 않습니다."));
     }
 
     // post 좋아요
@@ -76,12 +67,16 @@ public class PostServiceImpl implements PostService {
         Post post = findPost(id);
 
         if (post.getUser().equals(user)) {
-            return new ApiResponseDto("자신의 게시글에는 '좋아요'를 할 수 없습니다.", 200);
+            return new ApiResponseDto("자신의 게시글에는 '좋아요'를 할 수 없습니다.", 400);
         }
         PostLike postLike = postLikeRepository.findByPostIdAndUser(id, user).orElse(null);
 
         if (postLike == null) {
             postLike = new PostLike(post, user);
+            postLike.setLike(true);
+            postLikeRepository.save(postLike);
+            return new ApiResponseDto("좋아요", 200);
+        } else if (!postLike.getIsLike()){
             postLike.setLike(true);
             postLikeRepository.save(postLike);
             return new ApiResponseDto("좋아요", 200);
@@ -91,14 +86,20 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public ApiResponseDto deleteLikePost(Long id, User user) {
+    public ApiResponseDto unLikePost(Long id, User user) {
         PostLike postLike = postLikeRepository.findByPostIdAndUser(id, user).orElseThrow();
-        if (postLike.getLike()) {
+        if (postLike.getIsLike()) {
             postLike.setLike(false);
             postLikeRepository.save(postLike);
             return new ApiResponseDto("좋아요 취소", 200);
         } else {
             return new ApiResponseDto("취소할 좋아요가 없습니다.",400);
         }
+    }
+
+    @Override
+    public Post findPost(Long id) {
+        return postRepository.findById(id).orElseThrow(() ->
+                new IllegalArgumentException("선택한 게시글이 존재하지 않습니다."));
     }
 }

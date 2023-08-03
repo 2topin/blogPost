@@ -1,6 +1,5 @@
 package com.sparta.post.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 

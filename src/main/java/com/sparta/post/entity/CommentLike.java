@@ -1,8 +1,12 @@
 package com.sparta.post.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@Getter
+@NoArgsConstructor
 @Table(name = "comment_Like")
 public class CommentLike extends Timestamped {
 
@@ -10,23 +14,23 @@ public class CommentLike extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_Like_id")
     private Long id;
-    private Long commentId;
-    private String username;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     private Boolean isLike;
 
-    public CommentLike() {
-
-    }
-    public CommentLike(Long commentId, String username) {
-        this.commentId = commentId;
-        this.username = username;
+    public CommentLike(Comment comment, User user) {
+        this.comment = comment;
+        this.user = user;
     }
 
-    public Boolean getLike() {
-        return isLike;
-    }
-
-    public void setLike(Boolean Like) {
-        isLike = Like;
+    public void setLike(Boolean isLike) {
+        this.isLike = isLike;
     }
 }

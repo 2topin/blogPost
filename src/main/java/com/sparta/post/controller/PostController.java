@@ -1,15 +1,12 @@
 package com.sparta.post.controller;
 
-import com.google.protobuf.Api;
 import com.sparta.post.dto.ApiResponseDto;
 import com.sparta.post.dto.PostRequestDto;
 import com.sparta.post.dto.PostResponseDto;
 import com.sparta.post.entity.Post;
-import com.sparta.post.entity.User;
 import com.sparta.post.security.UserDetailsImpl;
 import com.sparta.post.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -31,7 +28,6 @@ public class PostController {
     public ResponseEntity<PostResponseDto> createPost(@RequestBody PostRequestDto postRequestDto,
                                                       @AuthenticationPrincipal UserDetailsImpl userDetails) {
         PostResponseDto post = postService.createPost(postRequestDto, userDetails.getUser());
-
         return ResponseEntity.status(201).body(post);
     }
 
@@ -92,9 +88,9 @@ public class PostController {
 
     // 좋아요 취소
     @PutMapping("/posts/{id}/unlike")
-    public ResponseEntity<ApiResponseDto> deleteLikePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
+    public ResponseEntity<ApiResponseDto> unLikePost(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable Long id) {
         try {
-            ApiResponseDto responseDto = postService.deleteLikePost(id, userDetails.getUser());
+            ApiResponseDto responseDto = postService.unLikePost(id, userDetails.getUser());
             return ResponseEntity.ok().body(responseDto);
         } catch (ResponseStatusException e) {
             return ResponseEntity.notFound().build();

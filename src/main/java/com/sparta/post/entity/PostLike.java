@@ -13,13 +13,14 @@ public class PostLike extends Timestamped {
     @Column(name = "post_like_id")
     private Long id;
     
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
     private Boolean isLike;
 
     public PostLike() {
@@ -30,11 +31,7 @@ public class PostLike extends Timestamped {
         this.user = user;
     }
 
-    public Boolean getLike( ) {
-        return isLike;
-    }
-
-    public void setLike(Boolean Like) {
-        isLike = Like;
+    public void setLike(Boolean isLike) {
+        this.isLike = isLike;
     }
 }

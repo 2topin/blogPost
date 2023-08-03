@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity // JPA가 관리할 수 있는 Entity 클래스 지정
 @Getter
@@ -31,14 +32,15 @@ public class Post extends Timestamped {
     @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Comment> commentList = new ArrayList<>();
 
-    @Column(nullable = false)
-    private Integer postLikeCount;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<PostLike> postLikes = new ArrayList<>();
+//    @Column(nullable = false)
+//    private Integer postLikeCount;
 
     public Post(PostRequestDto postRequestDto) {
         this.title = postRequestDto.getTitle();
         this.contents = postRequestDto.getContents();
-        this.postLikeCount = 0; // 기본값 설정
-
+//        this.postLikeCount = 0; // 기본값 설정
     }
 
     public void update(PostRequestDto postRequestDto) {
@@ -53,9 +55,15 @@ public class Post extends Timestamped {
         this.commentList.add(0, comment);
     }
 
-    public Integer getPostLikeCount() {
-        return postLikeCount;
+    public List<PostLike> getLikedPostLikes() {
+        return postLikes.stream()
+                .filter(PostLike::getIsLike)
+                .collect(Collectors.toList());
     }
+
+//    public Integer getPostLikeCount() {
+//        return postLikeCount;
+//    }
 
 //    public void setPostLikeCount(Integer postLikeCount) {
 //        this.postLikeCount = postLikeCount;
